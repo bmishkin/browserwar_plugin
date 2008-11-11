@@ -1,0 +1,40 @@
+8
+
+dir
+401
+svn+ssh://svn.sagebit.net/projects/cartabuzz/trunk/vendor/plugins/browser_war/test
+svn+ssh://svn.sagebit.net/projects/cartabuzz
+
+
+
+2008-11-03T21:22:13.479483Z
+392
+pboling
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+358637be-092c-46e9-8651-9e65a2999216
+
+browser_war_test.rb
+file
+
+
+
+
+2008-11-03T21:36:23.000000Z
+15ad016b8e58e7430198e96454ca8cf1
+2008-11-03T21:22:13.479483Z
+392
+pboling
+

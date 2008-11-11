@@ -1,0 +1,40 @@
+8
+
+dir
+401
+svn+ssh://svn.sagebit.net/projects/cartabuzz/trunk/vendor/plugins/browser_war/tasks
+svn+ssh://svn.sagebit.net/projects/cartabuzz
+
+
+
+2008-11-03T21:22:13.479483Z
+392
+pboling
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+358637be-092c-46e9-8651-9e65a2999216
+
+browser_war_tasks.rake
+file
+
+
+
+
+2008-11-03T21:36:23.000000Z
+51142f41fd0298f1c00950856d0139c1
+2008-11-03T21:22:13.479483Z
+392
+pboling
+

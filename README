@@ -1,0 +1,170 @@
+Copyright (c) 2008 Peter Boling and Matt Long of Sagebit LLC, released under the MIT license
+
+BrowserWar
+==========
+
+BrowserWar will help you to fight off evil browsers that access your website.
+The cheiftan of the evil lot is of course Internet Explorer version 6, see http://iedeathmarch.org/
+Though some would say "any" verison of IE is evil, and others would lump old versions of Netscape, and iCab and a littany of other browsers into the same group as well.
+
+As a result we created this tool to display messages to any any version of any browser!
+
+An example of one way to use BrowserWar is something you've probably seen before:
+
+browserwar.message = "'<p>It looks like you are using <b>' + browserwar.browser_display_name + ' ' + BrowserDetect.version + '</b> or older. To get the best experience from this site we suggest you upgrade your browser.</p>'"
+(an example of the underlying javascript usage, not the rails plugin useage)
+
+This plugin takes all the javascript features and bundles them into a nice rails view helper called start_browser_war().
+
+Does not rely on any external javascripts that are not included with the plugin.  The plugin is packaged with two javascript files:
+browserDetect.js from http://www.quirksmode.org/js/detect.html
+browserWar.js from:  http://github.com/sagebit/browserwar/tree/master by the same people who make this rails plugin version (Sagebit)
+
+
+Installation
+============
+
+script/plugin install git://github.com/sagebit/browser_war.git
+
+
+Usage
+=====
+
+start_browser_war() is the central mathod of the plugin, and it takes many parameters, but these are the defaults:
+
+start_browser_war({:browsers => browserwar_browsers_default, 
+									:message => browserwar_message_default, 
+									:options => browserwar_options_default})
+
+Breaking down these three parameters:
+
+:browsers => hash
+	* Format:
+			{'name' => version, 'name' => version, 'name = version, ...}
+	* List of possible brosers to include in the hash:
+ 			["Chrome","OmniWeb","Safari","Opera","iCab","Konqueror","Firefox","Camino","Netscape","Explorer","Mozilla"]
+	* if version is not specified for a browser ('' or nil) BrowserWar will display the message for ALL versions of the browser
+
+:message => Ruby string containing a javascript string
+	* Format:
+ 			"'<p>It looks like you are using <b>' + browserwar.browser_display_name + ' ' + BrowserDetect.version + '</b> or older. To get the best experience from this site we suggest you upgrade your browser.</p>'"
+	* if :message is not specified the default message will be used (see def browserwar_message_default in browser_war/lib/browser_war_helper.rb)
+			The default message tells people to upgrade their browser and has a link to http://browsehappy.com/browsers
+			
+:options => hash
+	* Default values:
+		{ 
+    	:id => 'browser_warning',
+			:class => nil,
+			:closeable => true,
+			:background => '#fff',
+			:color => '#000',
+			:top => '90px',
+			:left => '0px',
+			:width => '200px',
+			:padding => '20px',
+			:border => '20px solid #fff',
+			:z_index => '200'
+	  }
+	* Any of these values that are left unspecified will not be used, so tweak them however you need to.
+
+Helpful bits:
+	Some CSS to improve images and links in the browser_warning div (change if you do not use default :id in options hash)
+	
+#browser_warning a,
+#browser_warning a img {
+  color: #000;
+  border: 0px solid #fff;
+}
+
+#browser_warning a:hover {
+  color: #68CCFF;
+}
+
+
+Example
+=======
+
+In your layouts:
+
+	<head>
+	...
+	
+		<!-- DON'T FORGET THESE!!! (:defaults are NOT needed AT ALL for this plugin, and are only here because I said so)-->
+    <%= javascript_include_tag(:defaults, 'browserDetect', 'browserWar') %>
+    
+	...
+	</head>
+
+Anywhere in your layouts or templates... (can optionally go in the <head> tag, but must come after the javascript_include_tag)
+
+		<!-- Then, to go with all the defaults -->
+
+		<%= start_browser_war %>
+
+		<!-- which is equivalent to the following: -->
+
+		<%= start_browser_war({:browsers => browserwar_browsers_default, 
+									:message => browserwar_message_default, 
+									:options => browserwar_options_default}) %>
+
+		<!-- which is equivalent to the following: -->
+
+		<%= start_browser_war({:browsers => {'Explorer' => 6}, 
+									:message => 
+								    "'<p>This site is optimized for the <a href=\"http://www.mozilla.com/en-US/firefox/\"> Mozilla Firefox</a> browser.</p>' +
+								    '<p>It looks like you are using <b>' + browserwar.browser_display_name + ' ' + BrowserDetect.version + '</b> or older. To get the best experience from this site we suggest you upgrade your browser.</p>' +
+								    '<p>Click the image below to learn more about alternative browser options.</p>' +
+								    '<a href=\"http://browsehappy.com/browsers/\" title=\"Browse Happy: Switch to a safer browser today\"><img src=\"http://browsehappy.com/buttons/bh_185x75.gif\" alt=\"Browse Happy logo\" width=\"185\" height=\"75\"></a>'", 
+									:options => { 
+										:id => 'browser_warning',
+							      :class => nil,
+							      :closeable => true,
+							      :background => '#fff',
+							      :color => '#000',
+							      :top => '90px',
+							      :left => '0px',
+							      :width => '200px',
+							      :padding => '20px',
+							      :border => '8px ridge #68CCFF',
+							      :z_index => '200' }}) %>
+
+
+		
+		<!-- To only fight specific browsers -->
+		<%= start_browser_war(:browsers => {"Explorer" => 6, "Netscape" => 6} ) %>
+		
+		<!-- To customize the message (:message value must be a javascript string inside a ruby string e.g. "'string here'")-->
+		<%= start_browser_war(:message => "'<p>This website does not <em>enjoy</em> being viewed by your browser.</p>'" ) %>
+		
+		<!-- To customize the style -->
+		<%= start_browser_war(:options => { :id => 'browser_foo',
+																	      :class => 'myclass',
+																	      :closeable => false, #for no close link
+																	      :background => '#fff',
+																	      :color => '#000',
+																	      :top => '150px',
+																	      :left => '100px',
+																	      :width => '300px',
+																	      :padding => '20px',
+																	      :border => '20px solid #fff',
+																	      :z_index => '200' }) %>
+
+		<!-- To use all the options -->
+		<!-- As you can see in the example below you have access to some special browserwar fodder for your cannons: -->
+		<!--   browserwar.browser_display_name + ' ' + BrowserDetect.version will display the browser and version accessing your site! -->
+		<%= start_browser_war(:browsers => {"Explorer" => 6, "Netscape" => 6, "Firefox" => 3},
+													:message => "'<p>You are using ' + browserwar.browser_display_name + ' ' + BrowserDetect.version + ', which means that my website is better than your browser!</p>'",
+													:options => { :id => 'go_ahead_inslut_me',
+																	      :class => 'myclass',
+																	      :closeable => true, #for no close link
+																	      :background => '#ccc',
+																	      :color => '#333555',
+																	      :top => '150px',
+																	      :left => '100px',
+																	      :width => '300px',
+																	      :padding => '20px',
+																	      :border => '10px ridge #9c9c9c',
+																	      :z_index => '200' }) %>
+
+Copyright (c) 2008 Peter Boling and Matt Long of Sagebit LLC, released under the MIT license
